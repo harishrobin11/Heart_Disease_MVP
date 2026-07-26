@@ -7,6 +7,7 @@ from .eda import perform_eda
 from .preprocessing import prepare_data
 from .models import train_random_forest, build_and_train_ann
 from .evaluation import evaluate_models
+from .predict import predict_patient_risk, print_prediction_report
 
 __all__ = [
     "load_or_generate_data",
@@ -15,4 +16,6 @@ __all__ = [
     "train_random_forest",
     "build_and_train_ann",
     "evaluate_models",
+    "predict_patient_risk",
+    "print_prediction_report",
 ]
