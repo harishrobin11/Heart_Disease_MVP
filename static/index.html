@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Guard ML - Cardiovascular Risk Assessment & Analytics</title>
+    <!-- Modern Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="bg-gradient-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Glassmorphic Header -->
+        <header class="glass-header">
+            <div class="logo-area">
+                <div class="pulse-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div>
+                    <h1>Heart Guard <span>MLOps</span></h1>
+                    <p>Predictive Modeling & Real-Time Cardiovascular Risk Assessment</p>
+                </div>
+            </div>
+            <div class="status-badge" id="systemStatus">
+                <span class="status-dot"></span> <span id="statusText">Checking System Health...</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Patient Clinical Form -->
+            <section class="glass-card form-section">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-notes-medical"></i> Patient Clinical Profile</h2>
+                    <div class="preset-buttons">
+                        <button type="button" class="btn-preset btn-high" id="btnHighRisk">
+                            <i class="fa-solid fa-triangle-exclamation"></i> High-Risk Sample
+                        </button>
+                        <button type="button" class="btn-preset btn-low" id="btnLowRisk">
+                            <i class="fa-solid fa-shield-heart"></i> Low-Risk Sample
+                        </button>
+                    </div>
+                </div>
+
+                <form id="predictionForm" class="clinical-form">
+                    <div class="form-grid">
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label for="age">Age (years) <span class="val-display" id="ageVal">63</span></label>
+                            <input type="range" id="age" name="age" min="20" max="90" value="63" oninput="document.getElementById('ageVal').innerText=this.value">
+                        </div>
+
+                        <!-- Sex -->
+                        <div class="form-group">
+                            <label for="sex">Gender</label>
+                            <select id="sex" name="sex">
+                                <option value="1" selected>Male (1)</option>
+                                <option value="0">Female (0)</option>
+                            </select>
+                        </div>
+
+                        <!-- Chest Pain Type (cp) -->
+                        <div class="form-group">
+                            <label for="cp">Chest Pain Type (cp)</label>
+                            <select id="cp" name="cp">
+                                <option value="0" selected>Typical Angina (0)</option>
+                                <option value="1">Atypical Angina (1)</option>
+                                <option value="2">Non-Anginal Pain (2)</option>
+                                <option value="3">Asymptomatic (3)</option>
+                            </select>
+                        </div>
+
+                        <!-- Resting BP (trestbps) -->
+                        <div class="form-group">
+                            <label for="trestbps">Resting BP (mm Hg) <span class="val-display" id="bpsVal">160</span></label>
+                            <input type="range" id="trestbps" name="trestbps" min="90" max="200" value="160" oninput="document.getElementById('bpsVal').innerText=this.value">
+                        </div>
+
+                        <!-- Cholesterol (chol) -->
+                        <div class="form-group">
+                            <label for="chol">Cholesterol (mg/dl) <span class="val-display" id="cholVal">286</span></label>
+                            <input type="range" id="chol" name="chol" min="120" max="500" value="286" oninput="document.getElementById('cholVal').innerText=this.value">
+                        </div>
+
+                        <!-- Fasting Blood Sugar (fbs) -->
+                        <div class="form-group">
+                            <label for="fbs">Fasting Blood Sugar > 120 mg/dl</label>
+                            <select id="fbs" name="fbs">
+                                <option value="1" selected>True / Yes (1)</option>
+                                <option value="0">False / No (0)</option>
+                            </select>
+                        </div>
+
+                        <!-- Resting ECG (restecg) -->
+                        <div class="form-group">
+                            <label for="restecg">Resting ECG Result</label>
+                            <select id="restecg" name="restecg">
+                                <option value="0">Normal (0)</option>
+                                <option value="1" selected>ST-T Abnormality (1)</option>
+                                <option value="2">LV Hypertrophy (2)</option>
+                            </select>
+                        </div>
+
+                        <!-- Max Heart Rate (thalach) -->
+                        <div class="form-group">
+                            <label for="thalach">Max Heart Rate (thalach) <span class="val-display" id="hrVal">108</span></label>
+                            <input type="range" id="thalach" name="thalach" min="70" max="220" value="108" oninput="document.getElementById('hrVal').innerText=this.value">
+                        </div>
+
+                        <!-- Exercise Angina (exang) -->
+                        <div class="form-group">
+                            <label for="exang">Exercise Induced Angina</label>
+                            <select id="exang" name="exang">
+                                <option value="1" selected>Yes (1)</option>
+                                <option value="0">No (0)</option>
+                            </select>
+                        </div>
+
+                        <!-- ST Depression (oldpeak) -->
+                        <div class="form-group">
+                            <label for="oldpeak">ST Depression (oldpeak) <span class="val-display" id="stVal">2.6</span></label>
+                            <input type="range" id="oldpeak" name="oldpeak" min="0.0" max="6.0" step="0.1" value="2.6" oninput="document.getElementById('stVal').innerText=this.value">
+                        </div>
+
+                        <!-- ST Slope (slope) -->
+                        <div class="form-group">
+                            <label for="slope">ST Segment Slope</label>
+                            <select id="slope" name="slope">
+                                <option value="0">Upsloping (0)</option>
+                                <option value="1" selected>Flat (1)</option>
+                                <option value="2">Downsloping (2)</option>
+                            </select>
+                        </div>
+
+                        <!-- Major Vessels (ca) -->
+                        <div class="form-group">
+                            <label for="ca">Major Vessels Colored (ca)</label>
+                            <select id="ca" name="ca">
+                                <option value="0">0 Vessels</option>
+                                <option value="1">1 Vessel</option>
+                                <option value="2" selected>2 Vessels</option>
+                                <option value="3">3 Vessels</option>
+                                <option value="4">4 Vessels</option>
+                            </select>
+                        </div>
+
+                        <!-- Thalium Stress Test (thal) -->
+                        <div class="form-group form-group-full">
+                            <label for="thal">Thalium Stress Test Result</label>
+                            <select id="thal" name="thal">
+                                <option value="0">Normal (0)</option>
+                                <option value="1">Fixed Defect (1)</option>
+                                <option value="2" selected>Reversible Defect (2)</option>
+                                <option value="3">Unknown (3)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnSubmit">
+                        <i class="fa-solid fa-stethoscope"></i> Calculate Risk Assessment
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Column: Real-Time Risk Results Card -->
+            <section class="glass-card result-section">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-chart-line"></i> Inference Assessment Result</h2>
+                </div>
+
+                <div class="result-content" id="resultContainer">
+                    <!-- Gauge Meter -->
+                    <div class="gauge-wrapper">
+                        <div class="gauge-body">
+                            <div class="gauge-fill" id="gaugeFill"></div>
+                            <div class="gauge-cover">
+                                <span class="gauge-percent" id="riskPercent">--%</span>
+                                <span class="gauge-label">Risk Score</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Badge -->
+                    <div class="risk-badge badge-neutral" id="riskBadge">
+                        <i class="fa-solid fa-hourglass-start"></i> Awaiting Evaluation
+                    </div>
+
+                    <!-- Details Card -->
+                    <div class="details-card">
+                        <div class="detail-row">
+                            <span><i class="fa-solid fa-microchip"></i> Model Pipeline</span>
+                            <strong>Random Forest & Keras ANN</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fa-solid fa-gauge-high"></i> Probability Score</span>
+                            <strong id="probScore">--</strong>
+                        </div>
+                    </div>
+
+                    <!-- Advisory Box -->
+                    <div class="advisory-box" id="advisoryBox">
+                        <h4><i class="fa-solid fa-user-doctor"></i> Actionable Clinical Advisory</h4>
+                        <p id="advisoryText">Adjust clinical parameters and click "Calculate Risk Assessment" to perform real-time model inference.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Visual Analytics Artifacts Gallery -->
+        <section class="glass-card analytics-section">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-images"></i> MLOps Model Artifacts & Visual Analytics</h2>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('tabRoc')">ROC-AUC Curve</button>
+                    <button class="tab-btn" onclick="showTab('tabHeatmap')">Correlation Heatmap</button>
+                    <button class="tab-btn" onclick="showTab('tabDist')">Target Distribution</button>
+                    <button class="tab-btn" onclick="showTab('tabCm')">Confusion Matrices</button>
+                </div>
+            </div>
+
+            <div class="gallery-container">
+                <div id="tabRoc" class="tab-content active">
+                    <img src="/artifacts/roc_auc_comparison.png" alt="ROC AUC Comparison" class="analytics-img">
+                    <p class="img-caption">Overlaid ROC-AUC Performance Curves comparing Random Forest vs. Keras Neural Network on test set.</p>
+                </div>
+                <div id="tabHeatmap" class="tab-content">
+                    <img src="/plots/correlation_heatmap.png" alt="Correlation Heatmap" class="analytics-img">
+                    <p class="img-caption">Feature Correlation Heatmap highlighting clinical relationships across all 13 features.</p>
+                </div>
+                <div id="tabDist" class="tab-content">
+                    <img src="/plots/target_distribution.png" alt="Target Distribution" class="analytics-img">
+                    <p class="img-caption">Target Class Distribution illustrating Low-Risk (0) vs. High-Risk (1) patient distribution.</p>
+                </div>
+                <div id="tabCm" class="tab-content">
+                    <img src="/plots/confusion_matrices.png" alt="Confusion Matrices" class="analytics-img">
+                    <p class="img-caption">Side-by-side Confusion Matrices for Random Forest and Keras ANN models.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="glass-footer">
+            <p>Heart Guard MLOps • Powered by Scikit-Learn, TensorFlow/Keras & FastAPI • <a href="https://github.com/harishrobin11/Heart_Disease_MVP" target="_blank"><i class="fa-brands fa-github"></i> GitHub Repository</a></p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

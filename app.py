@@ -1,8 +1,8 @@
 """
-FastAPI REST API Server for Serving Real-Time Heart Disease Risk Inference.
+FastAPI REST API & Interactive Web Dashboard Server for Heart Disease Risk Serving.
 
 Loads serialized artifacts ('artifacts/scaler.pkl' and 'artifacts/random_forest_model.pkl')
-and exposes a POST /predict endpoint for real-time model inference.
+and serves both real-time REST API endpoints and a Glassmorphic Interactive Web UI.
 """
 
 import os
@@ -10,15 +10,32 @@ from typing import Dict, Any, Optional
 import pandas as pd
 import numpy as np
 import joblib
+
 from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 # Initialize FastAPI App
 app = FastAPI(
-    title="Heart Disease Risk Prediction API",
-    description="Production-grade REST API for serving ML predictions on patient clinical profiles.",
+    title="Heart Disease Risk Prediction API & Web Dashboard",
+    description="Production-grade REST API and Glassmorphic Web UI for Heart Disease Risk Prediction.",
     version="1.0.0"
 )
+
+# Enable CORS for browser requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Ensure static directory exists
+os.makedirs("static", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Global model and scaler variables
 scaler = None
@@ -57,7 +74,6 @@ def load_artifacts():
     model_path = os.path.join("artifacts", "random_forest_model.pkl")
 
     if not os.path.exists(scaler_path) or not os.path.exists(model_path):
-        # Auto-run main pipeline if artifacts are missing
         print("[API STARTUP] Artifacts missing. Running pipeline orchestrator main.py...")
         from main import main as run_main
         run_main()
@@ -65,6 +81,15 @@ def load_artifacts():
     scaler = joblib.load(scaler_path)
     rf_model = joblib.load(model_path)
     print("[API STARTUP] Scaler and Random Forest model loaded successfully into API memory.")
+
+
+@app.get("/", response_class=FileResponse)
+def serve_dashboard():
+    """Serves the interactive Glassmorphic Web Dashboard homepage."""
+    index_path = os.path.join("static", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "Web UI dashboard index.html loading..."}
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -78,6 +103,24 @@ def health_check():
     }
 
 
+@app.get("/plots/{filename}", response_class=FileResponse)
+def serve_plot(filename: str):
+    """Serves generated plot images from plots/ folder."""
+    file_path = os.path.join("plots", filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Plot file not found.")
+
+
+@app.get("/artifacts/{filename}", response_class=FileResponse)
+def serve_artifact_image(filename: str):
+    """Serves serialized artifact images from artifacts/ folder."""
+    file_path = os.path.join("artifacts", filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Artifact file not found.")
+
+
 @app.post("/predict", status_code=status.HTTP_200_OK)
 def predict(payload: PatientPayload):
     """
@@ -85,7 +128,7 @@ def predict(payload: PatientPayload):
 
     Returns:
         JSON response with predicted risk level ('High Risk' or 'Low Risk'), 
-        probability score, and clinical advisory.
+        probability score, risk score percentage, and clinical advisory.
     """
     if scaler is None or rf_model is None:
         raise HTTPException(
@@ -94,16 +137,13 @@ def predict(payload: PatientPayload):
         )
 
     try:
-        # Convert payload to DataFrame
         input_dict = payload.dict()
         df_single = pd.DataFrame([input_dict])[FEATURE_COLS]
 
-        # Apply fitted StandardScaler to continuous columns
         df_scaled = df_single.copy()
         df_scaled[CONTINUOUS_COLS] = scaler.transform(df_single[CONTINUOUS_COLS])
         X_input = df_scaled.values
 
-        # Perform inference
         probability = float(rf_model.predict_proba(X_input)[0, 1])
         prediction_label = "High Risk" if probability >= 0.5 else "Low Risk"
 
