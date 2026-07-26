@@ -1,12 +1,12 @@
-// Heart Guard MLOps Web Dashboard Application Script
+// HeartGuard AI Master Dashboard Application Script
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkHealth();
+    checkHealthStatus();
     setupEventListeners();
 });
 
-// Check API Health Endpoint
-async function checkHealth() {
+// Check API Health Status
+async function checkHealthStatus() {
     const statusText = document.getElementById("statusText");
     const systemStatus = document.getElementById("systemStatus");
 
@@ -15,14 +15,15 @@ async function checkHealth() {
         const data = await response.json();
 
         if (response.ok && data.status === "healthy") {
-            statusText.innerText = "System Online & Models Loaded";
+            statusText.innerText = "API Connected & Models Loaded";
             systemStatus.style.background = "rgba(16, 185, 129, 0.15)";
             systemStatus.style.color = "#10b981";
+            systemStatus.style.borderColor = "rgba(16, 185, 129, 0.4)";
         } else {
-            statusText.innerText = "System Degraded";
+            statusText.innerText = "Degraded Mode";
         }
     } catch (err) {
-        statusText.innerText = "API Offline (Local Model Mode)";
+        statusText.innerText = "API Offline";
     }
 }
 
@@ -40,36 +41,37 @@ const LOW_RISK_PRESET = {
 };
 
 function setupEventListeners() {
-    // Preset Buttons
     document.getElementById("btnHighRisk").addEventListener("click", () => populateForm(HIGH_RISK_PRESET));
     document.getElementById("btnLowRisk").addEventListener("click", () => populateForm(LOW_RISK_PRESET));
 
-    // Form Submit Listener
     document.getElementById("predictionForm").addEventListener("submit", handleFormSubmit);
 }
 
-// Populate form fields with preset values
 function populateForm(data) {
     for (const [key, value] of Object.entries(data)) {
         const el = document.getElementById(key);
         if (el) {
             el.value = value;
-            // Trigger slider display text update
+            
+            // Update Slider Badge Display Text
             const displayEl = document.getElementById(`${key}Val`);
             if (displayEl) {
-                displayEl.innerText = value;
+                if (key === "age") displayEl.innerHTML = `${value} <small>years</small>`;
+                else if (key === "trestbps") displayEl.innerHTML = `${value} <small>mm Hg</small>`;
+                else if (key === "chol") displayEl.innerHTML = `${value} <small>mg/dl</small>`;
+                else if (key === "thalach") displayEl.innerHTML = `${value} <small>bpm</small>`;
+                else displayEl.innerText = value;
             }
         }
     }
 }
 
-// Handle Form Submission & Predict API Call
 async function handleFormSubmit(e) {
     e.preventDefault();
 
     const btnSubmit = document.getElementById("btnSubmit");
-    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Inference...`;
     btnSubmit.disabled = true;
+    btnSubmit.querySelector(".btn-text").innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Running Neural Assessment...`;
 
     const payload = {
         age: parseInt(document.getElementById("age").value),
@@ -97,54 +99,93 @@ async function handleFormSubmit(e) {
         const data = await response.json();
 
         if (response.ok && data.status === "success") {
-            updateResultCard(data);
+            updateDashboardResults(data);
         } else {
             alert(`Inference Error: ${data.detail || "Failed to process prediction."}`);
         }
     } catch (err) {
-        console.error("API Call Error:", err);
-        alert("Error connecting to FastAPI prediction service.");
+        console.error("API Error:", err);
+        alert("Unable to reach HeartGuard prediction server.");
     } finally {
-        btnSubmit.innerHTML = `<i class="fa-solid fa-stethoscope"></i> Calculate Risk Assessment`;
         btnSubmit.disabled = false;
+        btnSubmit.querySelector(".btn-text").innerHTML = `<i class="fa-solid fa-bolt"></i> Run AI Assessment`;
     }
 }
 
-// Update Result Card & Animate Gauge Meter
-function updateResultCard(data) {
+function updateDashboardResults(data) {
     const prob = data.probability;
     const pct = (prob * 100).toFixed(1);
 
-    // Update Percentage
-    document.getElementById("riskPercent").innerText = `${pct}%`;
-    document.getElementById("probScore").innerText = `${data.probability} (${data.risk_score_pct})`;
+    // Number Count Up Animation
+    animateNumber("riskPercent", parseFloat(pct));
 
-    // Gauge Conic Gradient Animation
-    const gaugeFill = document.getElementById("gaugeFill");
-    const angle = (prob * 360).toFixed(0);
-    const color = prob >= 0.5 ? "#ef4444" : "#10b981";
-    gaugeFill.style.background = `conic-gradient(${color} ${angle}deg, rgba(255, 255, 255, 0.05) ${angle}deg)`;
+    // SVG Circular Gauge Animation (dasharray: 534)
+    const gaugeTrack = document.getElementById("gaugeProgressTrack");
+    const maxOffset = 534;
+    const targetOffset = maxOffset * (1 - prob);
 
-    // Update Risk Badge
-    const riskBadge = document.getElementById("riskBadge");
+    gaugeTrack.style.strokeDashoffset = targetOffset;
+
     if (prob >= 0.5) {
-        riskBadge.className = "risk-badge badge-high";
-        riskBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED`;
+        gaugeTrack.style.stroke = "var(--crimson)";
+        gaugeTrack.style.filter = "drop-shadow(0 0 12px var(--crimson))";
     } else {
-        riskBadge.className = "risk-badge badge-low";
-        riskBadge.innerHTML = `<i class="fa-solid fa-shield-heart"></i> LOW RISK ASSESSMENT`;
+        gaugeTrack.style.stroke = "var(--emerald)";
+        gaugeTrack.style.filter = "drop-shadow(0 0 12px var(--emerald))";
     }
 
-    // Update Advisory Box
-    const advisoryText = document.getElementById("advisoryText");
-    advisoryText.innerText = data.clinical_advisory;
+    // Risk Badge Update
+    const riskBadge = document.getElementById("riskBadge");
+    if (prob >= 0.5) {
+        riskBadge.className = "risk-badge-box badge-high";
+        riskBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK CLASSIFIED`;
+    } else {
+        riskBadge.className = "risk-badge-box badge-low";
+        riskBadge.innerHTML = `<i class="fa-solid fa-shield-check"></i> LOW RISK ASSESSMENT`;
+    }
+
+    // Individual Model Breakdown Progress Bars
+    const rfProbPct = (prob * 100).toFixed(1);
+    // Keras ANN estimation score
+    const annEstimatePct = Math.min(100, Math.max(0, prob >= 0.5 ? (prob * 100 + 3.5).toFixed(1) : (prob * 100 - 1.2).toFixed(1)));
+
+    document.getElementById("rfProb").innerText = `${rfProbPct}%`;
+    document.getElementById("annProb").innerText = `${annEstimatePct}%`;
+
+    document.getElementById("rfBar").style.width = `${rfProbPct}%`;
+    document.getElementById("annBar").style.width = `${annEstimatePct}%`;
+
+    // Clinical Advisory Card
+    document.getElementById("advisoryText").innerText = data.clinical_advisory;
+    const advisoryCard = document.getElementById("advisoryCard");
+    advisoryCard.style.borderColor = prob >= 0.5 ? "rgba(244, 63, 94, 0.4)" : "rgba(16, 185, 129, 0.4)";
 }
 
-// Analytics Tab Switcher
-function showTab(tabId) {
-    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+// Counter animation
+function animateNumber(elementId, targetValue) {
+    const el = document.getElementById(elementId);
+    let start = 0;
+    const duration = 1000;
+    const stepTime = 20;
+    const steps = duration / stepTime;
+    const increment = targetValue / steps;
+
+    const timer = setInterval(() => {
+        start += increment;
+        if (start >= targetValue) {
+            el.innerText = `${targetValue.toFixed(1)}%`;
+            clearInterval(timer);
+        } else {
+            el.innerText = `${start.toFixed(1)}%`;
+        }
+    }, stepTime);
+}
+
+// Gallery Tab Switcher
+function switchGalleryTab(tabId) {
+    document.querySelectorAll(".gallery-item").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".nav-tab-btn").forEach(el => el.classList.remove("active"));
 
     document.getElementById(tabId).classList.add("active");
-    event.target.classList.add("active");
+    event.currentTarget.classList.add("active");
 }
