@@ -1,74 +1,58 @@
 """
-Main Pipeline Entry Point for Heart Disease Risk Predictive Modeling.
+MLOps Pipeline Orchestrator for Heart Disease Risk Predictive Modeling.
 
-Orchestrates data loading, exploratory data analysis (EDA), 
-preprocessing with StandardScaler & SMOTE, hyperparameter tuning with GridSearchCV for Random Forest, 
-Keras ANN training with EarlyStopping, and comprehensive model evaluation & visualization.
+Executes the end-to-end pipeline:
+1. Load or Generate Raw Dataset ('data/raw/heart_disease.csv')
+2. Preprocess, Scale & Balance Training Data ('artifacts/scaler.pkl')
+3. Train & Serialize Random Forest & Keras ANN ('artifacts/random_forest_model.pkl', 'artifacts/ann_model.h5')
+4. Evaluate Models & Save Metrics Plots ('artifacts/roc_auc_comparison.png')
 """
 
-import sys
-import argparse
+import os
 from src.data_loader import load_or_generate_data
-from src.eda import perform_eda
-from src.preprocessing import prepare_data
-from src.models import train_random_forest, build_and_train_ann
-from src.evaluation import evaluate_models
+from src.preprocessing import run_preprocessing_pipeline
+from src.train import train_random_forest, train_ann_model
+from src.evaluate import evaluate_models
 
 
-def run_pipeline(data_path: str = None, n_samples: int = 1000, output_dir: str = "plots") -> None:
-    """
-    Executes the full end-to-end predictive modeling pipeline.
+def main():
+    raw_data_path = os.path.join("data", "raw", "heart_disease.csv")
+    artifact_dir = "artifacts"
 
-    Parameters:
-        data_path (str, optional): Path to input dataset CSV.
-        n_samples (int): Number of synthetic samples if dataset is generated.
-        output_dir (str): Folder path for visual plot exports.
-    """
-    print("\n=======================================================")
-    print("  PREDICTIVE MODELING FOR HEART DISEASE RISK PIPELINE  ")
-    print("=======================================================")
-
-    # Step 1: Data Loading & Synthetic Generation
-    df = load_or_generate_data(filepath=data_path, n_samples=n_samples, random_state=42)
-
-    # Step 2: Exploratory Data Analysis (EDA)
-    perform_eda(df, output_dir=output_dir)
-
-    # Step 3: Preprocessing Pipeline (Split, StandardScaler, SMOTE)
-    X_train, X_test, y_train, y_test, scaler, feature_names = prepare_data(
-        df, target_col="target", test_size=0.2, random_state=42, use_smote=True
-    )
-
-    # Step 4: Model Building & Hyperparameter Tuning
-    # Model A: Random Forest (GridSearchCV)
-    best_rf, best_params = train_random_forest(X_train, y_train, random_state=42, cv=5)
-
-    # Model B: Artificial Neural Network (Keras ANN)
-    input_dim = X_train.shape[1]
-    ann_model, history = build_and_train_ann(
-        X_train, y_train, input_dim=input_dim, epochs=100, batch_size=32, validation_split=0.2, random_state=42
-    )
-
-    # Step 5: Evaluation & Visual Comparison
-    metrics_summary = evaluate_models(
-        rf_model=best_rf,
-        ann_model=ann_model,
-        X_test=X_test,
-        y_test=y_test,
-        output_dir=output_dir
-    )
+    # Ensure required directories exist dynamically
+    os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
+    os.makedirs(artifact_dir, exist_ok=True)
 
     print("\n=======================================================")
-    print("          PIPELINE EXECUTION COMPLETED SUCCESSFULLY    ")
+    print("      STARTING MLOPS HEART DISEASE MODELING PIPELINE   ")
     print("=======================================================")
-    print(f"All plots and graphical visual artifacts saved under '{output_dir}/'")
+
+    # 1. Load Data / Synthetic Generation
+    df = load_or_generate_data(filepath=raw_data_path, n_samples=1000)
+
+    # 2. Preprocess & Serialize Scaler
+    X_train_res, X_test_scaled, y_train_res, y_test, feature_names = run_preprocessing_pipeline(
+        df, target_col="target", test_size=0.2, artifact_dir=artifact_dir
+    )
+
+    # 3. Train & Serialize Models
+    rf_model, _ = train_random_forest(X_train_res, y_train_res, cv=5, artifact_dir=artifact_dir)
+    
+    input_dim = X_train_res.shape[1]
+    ann_model, _ = train_ann_model(X_train_res, y_train_res, input_dim=input_dim, epochs=100, artifact_dir=artifact_dir)
+
+    # 4. Evaluate & Save Graphics
+    metrics = evaluate_models(rf_model, ann_model, X_test_scaled, y_test, artifact_dir=artifact_dir)
+
+    print("\n=======================================================")
+    print("    PIPELINE EXECUTED SUCCESSFULLY & ARTIFACTS SAVED    ")
+    print("=======================================================")
+    print(f"Serialized artifacts saved under '{artifact_dir}/':")
+    print("  - artifacts/scaler.pkl")
+    print("  - artifacts/random_forest_model.pkl")
+    print("  - artifacts/ann_model.h5")
+    print("  - artifacts/roc_auc_comparison.png")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Heart Disease Risk Predictive Modeling Pipeline")
-    parser.add_argument("--data_path", type=str, default=None, help="Path to input dataset CSV file (optional)")
-    parser.add_argument("--samples", type=int, default=1000, help="Number of synthetic samples if generated (default: 1000)")
-    parser.add_argument("--output_dir", type=str, default="plots", help="Directory to save generated plot artifacts (default: plots)")
-    
-    args = parser.parse_args()
-    run_pipeline(data_path=args.data_path, n_samples=args.samples, output_dir=args.output_dir)
+    main()
