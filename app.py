@@ -1,9 +1,12 @@
 """
 Streamlit Community Cloud Web Application for Heart Disease Risk Prediction MVP.
 
-State-of-the-Art Clinical Decision Support System featuring Glassmorphic UI/UX,
-Google Fonts, Dual-Model (Random Forest + Keras ANN) Ensemble Inference,
-Interactive Vitals Benchmarks, and Real-Time Risk Sensitivity Analytics.
+Ultra-Balanced & Symmetrical Clinical Decision Support System featuring:
+- Glassmorphic Dual-Panel Input Architecture
+- Google Fonts (Plus Jakarta Sans) & Custom Design Tokens
+- Dual-Model (Random Forest + Keras ANN) Ensemble Inference
+- High-DPI Vitals vs Reference Benchmark Visualization
+- Symmetrical Metric Summary Grid & Clinical Advisory Protocol
 """
 
 import os
@@ -31,7 +34,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Design System - Glassmorphism, Google Fonts, Custom Tokens
+# Custom Design System - Glassmorphism, Google Fonts, Symmetrical Grid Rules
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -46,29 +49,29 @@ st.markdown("""
     }
 
     .stApp {
-        background: radial-gradient(circle at 50% 0%, #1E1B4B 0%, #0F172A 50%, #0B0F17 100%);
+        background: radial-gradient(circle at 50% 0%, #1E1B4B 0%, #0F172A 55%, #0B0F17 100%);
         background-attachment: fixed;
     }
 
     /* Glassmorphic Container Cards */
-    .glass-card {
+    .glass-panel {
         background: rgba(23, 32, 54, 0.65);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 24px;
-        margin-bottom: 24px;
+        height: 100%;
         box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.4);
     }
 
     .glass-header {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(99, 102, 241, 0.25);
         border-radius: 20px;
-        padding: 28px;
-        margin-bottom: 28px;
+        padding: 24px 32px;
+        margin-bottom: 24px;
         box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
@@ -80,7 +83,7 @@ st.markdown("""
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.4);
         color: #A5B4FC;
-        padding: 4px 12px;
+        padding: 4px 14px;
         border-radius: 20px;
         font-size: 0.82rem;
         font-weight: 600;
@@ -93,48 +96,87 @@ st.markdown("""
         color: #6EE7B7;
     }
 
+    /* Symmetrical Panel Titles */
+    .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(30, 41, 59, 0.5);
+        padding: 12px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #6366F1;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #F8FAFC;
+    }
+
+    .panel-title-right {
+        border-left-color: #06B6D4;
+    }
+
     /* Risk Score Cards */
     .risk-card-high {
-        background: linear-gradient(135deg, rgba(159, 18, 57, 0.35) 0%, rgba(88, 28, 135, 0.35) 100%);
+        background: linear-gradient(135deg, rgba(159, 18, 57, 0.4) 0%, rgba(88, 28, 135, 0.4) 100%);
         border: 1.5px solid #F43F5E;
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 24px;
         color: #FFE4E6;
+        height: 100%;
         box-shadow: 0 10px 35px rgba(244, 63, 94, 0.25);
     }
 
     .risk-card-moderate {
-        background: linear-gradient(135deg, rgba(180, 83, 9, 0.35) 0%, rgba(146, 64, 14, 0.35) 100%);
+        background: linear-gradient(135deg, rgba(180, 83, 9, 0.4) 0%, rgba(146, 64, 14, 0.4) 100%);
         border: 1.5px solid #F59E0B;
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 24px;
         color: #FEF3C7;
+        height: 100%;
         box-shadow: 0 10px 35px rgba(245, 158, 11, 0.25);
     }
 
     .risk-card-low {
-        background: linear-gradient(135deg, rgba(6, 95, 70, 0.35) 0%, rgba(20, 83, 45, 0.35) 100%);
+        background: linear-gradient(135deg, rgba(6, 95, 70, 0.4) 0%, rgba(20, 83, 45, 0.4) 100%);
         border: 1.5px solid #10B981;
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 24px;
         color: #D1FAE5;
+        height: 100%;
         box-shadow: 0 10px 35px rgba(16, 185, 129, 0.25);
     }
 
     /* Clinical Recommendation Box */
     .advisory-box {
-        background: rgba(15, 23, 42, 0.7);
+        background: rgba(15, 23, 42, 0.75);
         border-left: 4px solid #6366F1;
-        border-radius: 8px;
-        padding: 14px 18px;
-        margin-top: 14px;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-top: 18px;
         font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Metric Card Uniformity */
+    div[data-testid="stMetric"] {
+        background: rgba(23, 32, 54, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 16px 20px;
+        text-align: center;
+    }
+
+    div[data-testid="stMetricValue"] {
+        font-size: 1.9rem !important;
+        font-weight: 800 !important;
+        color: #38BDF8 !important;
     }
 
     /* Custom Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 12px;
         background-color: transparent;
+        justify-content: center;
     }
 
     .stTabs [data-baseweb="tab"] {
@@ -142,44 +184,36 @@ st.markdown("""
         white-space: pre-wrap;
         background-color: rgba(30, 41, 59, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
+        border-radius: 12px;
         color: #94A3B8;
         font-weight: 600;
-        font-size: 0.9rem;
-        padding: 0px 20px;
+        font-size: 0.92rem;
+        padding: 0px 24px;
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        box-shadow: 0 4px 18px rgba(79, 70, 229, 0.4);
     }
 
-    /* Metric Badges */
-    div[data-testid="stMetricValue"] {
-        font-size: 1.8rem !important;
-        font-weight: 700 !important;
-        color: #38BDF8 !important;
-    }
-
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] {
-        background-color: #0F172A;
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* Buttons */
+    /* Primary CTA Button */
     div.stButton > button {
-        border-radius: 12px;
-        font-weight: 700;
-        letter-spacing: 0.02em;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 0.03em;
+        padding: 12px 24px;
         transition: all 0.3s ease;
+        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+        border: none;
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
     }
     
     div.stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.5);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -217,29 +251,31 @@ def load_model_artifacts():
 
 
 def main():
-    # Hero Header Banner
+    # Symmetrical Hero Header Banner
     st.markdown("""
         <div class="glass-header">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                 <div>
-                    <span class="status-pill-green">🟢 Live Clinical Engine</span>
-                    <span class="status-pill">⚡ Dual-Model Ensemble (RF + ANN)</span>
-                    <h1 style="color: #FFFFFF; font-size: 2.2rem; font-weight: 800; margin: 10px 0 4px 0; letter-spacing: -0.02em;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <span class="status-pill-green">🟢 System Operational</span>
+                        <span class="status-pill">⚡ Dual Ensemble (RF + ANN)</span>
+                    </div>
+                    <h1 style="color: #FFFFFF; font-size: 2.3rem; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
                         🫀 Heart Disease Risk Prediction Engine
                     </h1>
-                    <p style="color: #94A3B8; font-size: 1.05rem; margin: 0; font-weight: 400;">
-                        AI-Powered Cardiovascular Diagnostics & MLOps Decision Support System
+                    <p style="color: #94A3B8; font-size: 1.05rem; margin-top: 6px; font-weight: 400;">
+                        Clinical Decision Support & Real-Time Ischemia Diagnostic MVP
                     </p>
                 </div>
-                <div style="background: rgba(99, 102, 241, 0.12); padding: 12px 20px; border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.3);">
-                    <div style="color: #A5B4FC; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Model Precision</div>
-                    <div style="color: #38BDF8; font-size: 1.6rem; font-weight: 800;">91.2% ROC-AUC</div>
+                <div style="background: rgba(99, 102, 241, 0.12); padding: 14px 24px; border-radius: 16px; border: 1px solid rgba(99, 102, 241, 0.3); text-align: center;">
+                    <div style="color: #A5B4FC; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Benchmark ROC-AUC</div>
+                    <div style="color: #38BDF8; font-size: 1.7rem; font-weight: 800;">91.2%</div>
                 </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Load Models
+    # Load Artifacts
     try:
         scaler, rf_model, ann_model = load_model_artifacts()
     except Exception as e:
@@ -254,7 +290,7 @@ def main():
         </div>
     """, unsafe_allow_html=True)
 
-    preset_choice = st.sidebar.radio(
+    sidebar_preset = st.sidebar.radio(
         "Select Patient Profile Preset:",
         options=[
             "⚙️ Custom Inputs",
@@ -264,16 +300,16 @@ def main():
         ]
     )
 
-    # Default Form Values based on Preset
-    if "High Risk" in preset_choice:
+    # Handle Preset Defaults
+    if "High Risk" in sidebar_preset:
         def_age, def_sex, def_cp, def_trestbps, def_chol = 63, 1, 0, 160, 286
         def_fbs, def_restecg, def_thalach, def_exang = 1, 1, 108, 1
         def_oldpeak, def_slope, def_ca, def_thal = 2.6, 1, 2, 2
-    elif "Moderate Risk" in preset_choice:
+    elif "Moderate Risk" in sidebar_preset:
         def_age, def_sex, def_cp, def_trestbps, def_chol = 58, 1, 1, 142, 245
         def_fbs, def_restecg, def_thalach, def_exang = 0, 1, 138, 1
         def_oldpeak, def_slope, def_ca, def_thal = 1.4, 1, 1, 2
-    elif "Low Risk" in preset_choice:
+    elif "Low Risk" in sidebar_preset:
         def_age, def_sex, def_cp, def_trestbps, def_chol = 34, 0, 2, 115, 182
         def_fbs, def_restecg, def_thalach, def_exang = 0, 0, 174, 0
         def_oldpeak, def_slope, def_ca, def_thal = 0.0, 2, 0, 1
@@ -286,40 +322,54 @@ def main():
     tab_calc, tab_analytics, tab_dict = st.tabs([
         "🩺 Clinical Risk Calculator", 
         "📊 Model Analytics & ROC-AUC", 
-        "ℹ️ Clinical Feature Dictionary"
+        "ℹ️ Feature Reference Dictionary"
     ])
 
     with tab_calc:
-        st.markdown("### 📝 Patient Input Metrics")
-        st.write("Enter patient vitals and laboratory diagnostic results below:")
+        # In-Page Quick Preset Selector Bar
+        st.markdown("<p style='text-align: center; color: #94A3B8; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;'>⚡ Quick Load Patient Cases:</p>", unsafe_allow_html=True)
+        p_col1, p_col2, p_col3, p_col4 = st.columns(4)
 
-        col1, col2, col3 = st.columns(3)
+        if p_col1.button("🔴 Load High Risk", use_container_width=True):
+            def_age, def_sex, def_cp, def_trestbps, def_chol = 63, 1, 0, 160, 286
+            def_fbs, def_restecg, def_thalach, def_exang = 1, 1, 108, 1
+            def_oldpeak, def_slope, def_ca, def_thal = 2.6, 1, 2, 2
 
-        with col1:
+        if p_col2.button("🟡 Load Moderate Risk", use_container_width=True):
+            def_age, def_sex, def_cp, def_trestbps, def_chol = 58, 1, 1, 142, 245
+            def_fbs, def_restecg, def_thalach, def_exang = 0, 1, 138, 1
+            def_oldpeak, def_slope, def_ca, def_thal = 1.4, 1, 1, 2
+
+        if p_col3.button("🟢 Load Low Risk", use_container_width=True):
+            def_age, def_sex, def_cp, def_trestbps, def_chol = 34, 0, 2, 115, 182
+            def_fbs, def_restecg, def_thalach, def_exang = 0, 0, 174, 0
+            def_oldpeak, def_slope, def_ca, def_thal = 0.0, 2, 0, 1
+
+        if p_col4.button("🔄 Reset Defaults", use_container_width=True):
+            def_age, def_sex, def_cp, def_trestbps, def_chol = 52, 1, 0, 130, 240
+            def_fbs, def_restecg, def_thalach, def_exang = 0, 0, 150, 0
+            def_oldpeak, def_slope, def_ca, def_thal = 1.0, 1, 0, 2
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Symmetrical Dual-Panel Input Grid (1:1 Equal Columns)
+        input_col_left, input_col_right = st.columns(2)
+
+        with input_col_left:
             st.markdown("""
-                <div style="background: rgba(30, 41, 59, 0.4); padding: 14px; border-radius: 12px; border-left: 3px solid #38BDF8; margin-bottom: 12px;">
-                    <h4 style="margin:0; color: #38BDF8; font-size: 1rem;">1. Demographics & Vitals</h4>
-                </div>
+                <div class="glass-panel">
+                    <div class="panel-title">
+                        <span>👤 Panel A: Baseline Vitals & Patient Lab Profile</span>
+                    </div>
             """, unsafe_allow_html=True)
-            
-            age = st.number_input("Patient Age (years)", min_value=1, max_value=120, value=def_age, step=1, help="Patient age in years")
-            sex_str = st.selectbox("Gender", options=["Female (0)", "Male (1)"], index=def_sex)
+
+            age = st.number_input("Patient Age (years)", min_value=1, max_value=120, value=def_age, step=1)
+            sex_str = st.selectbox("Biological Gender", options=["Female (0)", "Male (1)"], index=def_sex)
             sex = 1 if "Male" in sex_str else 0
-            trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=50, max_value=250, value=def_trestbps, step=1, help="Resting BP on admission")
-            chol = st.number_input("Serum Cholesterol (mg/dl)", min_value=100, max_value=600, value=def_chol, step=1, help="Serum cholesterol in mg/dl")
-            thalach = st.number_input("Max Heart Rate Achieved (bpm)", min_value=50, max_value=250, value=def_thalach, step=1, help="Maximum heart rate achieved during stress test")
-
-        with col2:
-            st.markdown("""
-                <div style="background: rgba(30, 41, 59, 0.4); padding: 14px; border-radius: 12px; border-left: 3px solid #818CF8; margin-bottom: 12px;">
-                    <h4 style="margin:0; color: #818CF8; font-size: 1rem;">2. Symptoms & Electrocardiography</h4>
-                </div>
-            """, unsafe_allow_html=True)
-
-            cp_options = ["0: Typical Angina", "1: Atypical Angina", "2: Non-anginal Pain", "3: Asymptomatic"]
-            cp_str = st.selectbox("Chest Pain Type (cp)", options=cp_options, index=def_cp)
-            cp = int(cp_str.split(":")[0])
-
+            
+            trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=50, max_value=250, value=def_trestbps, step=1)
+            chol = st.number_input("Serum Cholesterol (mg/dl)", min_value=100, max_value=600, value=def_chol, step=1)
+            
             fbs_str = st.selectbox("Fasting Blood Sugar > 120 mg/dl", options=["No / Normal (0)", "Yes / Elevated (1)"], index=def_fbs)
             fbs = 1 if "Yes" in fbs_str else 0
 
@@ -327,17 +377,26 @@ def main():
             restecg_str = st.selectbox("Resting ECG Results", options=restecg_options, index=def_restecg)
             restecg = int(restecg_str.split(":")[0])
 
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with input_col_right:
+            st.markdown("""
+                <div class="glass-panel">
+                    <div class="panel-title panel-title-right">
+                        <span>🫀 Panel B: Stress Diagnostics & Cardiac Ischemia</span>
+                    </div>
+            """, unsafe_allow_html=True)
+
+            cp_options = ["0: Typical Angina", "1: Atypical Angina", "2: Non-anginal Pain", "3: Asymptomatic"]
+            cp_str = st.selectbox("Chest Pain Type (cp)", options=cp_options, index=def_cp)
+            cp = int(cp_str.split(":")[0])
+
+            thalach = st.number_input("Max Heart Rate Achieved (bpm)", min_value=50, max_value=250, value=def_thalach, step=1)
+
             exang_str = st.selectbox("Exercise Induced Angina", options=["No (0)", "Yes (1)"], index=def_exang)
             exang = 1 if "Yes" in exang_str else 0
 
-        with col3:
-            st.markdown("""
-                <div style="background: rgba(30, 41, 59, 0.4); padding: 14px; border-radius: 12px; border-left: 3px solid #C084FC; margin-bottom: 12px;">
-                    <h4 style="margin:0; color: #C084FC; font-size: 1rem;">3. Cardiac Stress Diagnostics</h4>
-                </div>
-            """, unsafe_allow_html=True)
-
-            oldpeak = st.number_input("ST Depression (oldpeak)", min_value=0.0, max_value=10.0, value=float(def_oldpeak), step=0.1, help="ST depression induced by exercise relative to rest")
+            oldpeak = st.number_input("ST Depression (oldpeak mm)", min_value=0.0, max_value=10.0, value=float(def_oldpeak), step=0.1)
 
             slope_options = ["0: Upsloping", "1: Flat", "2: Downsloping"]
             slope_str = st.selectbox("Peak Exercise ST Slope", options=slope_options, index=def_slope)
@@ -346,17 +405,19 @@ def main():
             ca = st.selectbox("Major Vessels Colored by Fluoroscopy (0-4)", options=[0, 1, 2, 3, 4], index=def_ca)
 
             thal_options = ["0: Normal", "1: Fixed Defect", "2: Reversible Defect", "3: Unknown"]
-            thal_str = st.selectbox("Thalium Stress Test", options=thal_options, index=def_thal)
+            thal_str = st.selectbox("Thalium Stress Test Result", options=thal_options, index=def_thal)
             thal = int(thal_str.split(":")[0])
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Inference Action
-        btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
-        with btn_col2:
-            calc_trigger = st.button("⚡ Run Real-Time Risk Assessment", use_container_width=True, type="primary")
+        # Centered CTA Button
+        b_col1, b_col2, b_col3 = st.columns([1, 2, 1])
+        with b_col2:
+            calc_trigger = st.button("⚡ RUN REAL-TIME CARDIOVASCULAR RISK ASSESSMENT", use_container_width=True, type="primary")
 
-        # Perform Inference
+        # Inference Pipeline Calculation
         input_data = {
             "age": age, "sex": sex, "cp": cp, "trestbps": trestbps,
             "chol": chol, "fbs": fbs, "restecg": restecg, "thalach": thalach,
@@ -379,27 +440,47 @@ def main():
         risk_pct = ensemble_prob * 100
 
         st.markdown("---")
-        st.markdown("### 🎯 Risk Assessment Results")
+        st.markdown("### 🎯 Symmetrical Risk Assessment Dashboard")
 
-        res_col1, res_col2 = st.columns([1.1, 1.0])
+        # Row 1: Symmetrical 3-Metric Summary Bar
+        m_col1, m_col2, m_col3 = st.columns(3)
 
-        with res_col1:
+        with m_col1:
+            if ensemble_prob >= 0.65:
+                st.metric("Ensemble Risk Score", f"{risk_pct:.1f}%", "🔴 High Risk Tier 3")
+            elif ensemble_prob >= 0.35:
+                st.metric("Ensemble Risk Score", f"{risk_pct:.1f}%", "🟡 Moderate Risk Tier 2")
+            else:
+                st.metric("Ensemble Risk Score", f"{risk_pct:.1f}%", "🟢 Low Risk Tier 1")
+
+        with m_col2:
+            st.metric("Random Forest Model", f"{rf_prob*100:.1f}%", "Tree Ensemble Confidence")
+
+        with m_col3:
+            st.metric("Keras Neural Network", f"{ann_prob*100:.1f}%", "Deep Learning Confidence")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Row 2: Symmetrical Dual Results Glass Panels (1:1 Equal Width & Height)
+        res_left, res_right = st.columns(2)
+
+        with res_left:
             if ensemble_prob >= 0.65:
                 st.markdown(f"""
                     <div class="risk-card-high">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 0.05em; text-transform: uppercase;">⚠️ HIGH CARDIOVASCULAR RISK</span>
-                            <span style="background: rgba(244, 63, 94, 0.3); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 3 ALERT</span>
+                            <span style="background: rgba(244, 63, 94, 0.3); padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 3 ALERT</span>
                         </div>
-                        <div style="font-size: 3.5rem; font-weight: 800; margin: 12px 0 4px 0; color: #FFFFFF;">
+                        <div style="font-size: 3.6rem; font-weight: 800; margin: 10px 0 4px 0; color: #FFFFFF;">
                             {risk_pct:.1f}%
                         </div>
                         <div style="background: rgba(255, 255, 255, 0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
                             <div style="background: #F43F5E; width: {risk_pct}%; height: 100%;"></div>
                         </div>
                         <div class="advisory-box">
-                            <b>🩺 Clinical Advisory:</b> High probability of underlying ischemic heart disease detected. 
-                            Immediate cardiology consultation, 12-lead ECG review, coronary angiography, and lipid-lowering intervention strongly advised.
+                            <b>🩺 Protocol Advisory:</b> High probability of underlying ischemic heart disease detected. 
+                            Immediate cardiology consultation, 12-lead ECG review, coronary angiography, and intensive lipid management recommended.
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -408,17 +489,17 @@ def main():
                     <div class="risk-card-moderate">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 0.05em; text-transform: uppercase;">⚡ MODERATE CARDIOVASCULAR RISK</span>
-                            <span style="background: rgba(245, 158, 11, 0.3); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 2 MONITORING</span>
+                            <span style="background: rgba(245, 158, 11, 0.3); padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 2 MONITORING</span>
                         </div>
-                        <div style="font-size: 3.5rem; font-weight: 800; margin: 12px 0 4px 0; color: #FFFFFF;">
+                        <div style="font-size: 3.6rem; font-weight: 800; margin: 10px 0 4px 0; color: #FFFFFF;">
                             {risk_pct:.1f}%
                         </div>
                         <div style="background: rgba(255, 255, 255, 0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
                             <div style="background: #F59E0B; width: {risk_pct}%; height: 100%;"></div>
                         </div>
                         <div class="advisory-box">
-                            <b>🩺 Clinical Advisory:</b> Elevated risk markers detected. 
-                            Recommended actions include dietary modification, regular aerobic conditioning, blood pressure tracking, and follow-up clinical screening within 30 days.
+                            <b>🩺 Protocol Advisory:</b> Elevated risk markers detected. 
+                            Recommended actions include dietary modification, aerobic conditioning, BP tracking, and follow-up screening within 30 days.
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -427,32 +508,28 @@ def main():
                     <div class="risk-card-low">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 0.05em; text-transform: uppercase;">✅ LOW CARDIOVASCULAR RISK</span>
-                            <span style="background: rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 1 LOW RISK</span>
+                            <span style="background: rgba(16, 185, 129, 0.3); padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">TIER 1 LOW RISK</span>
                         </div>
-                        <div style="font-size: 3.5rem; font-weight: 800; margin: 12px 0 4px 0; color: #FFFFFF;">
+                        <div style="font-size: 3.6rem; font-weight: 800; margin: 10px 0 4px 0; color: #FFFFFF;">
                             {risk_pct:.1f}%
                         </div>
                         <div style="background: rgba(255, 255, 255, 0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
                             <div style="background: #10B981; width: {risk_pct}%; height: 100%;"></div>
                         </div>
                         <div class="advisory-box">
-                            <b>🩺 Clinical Advisory:</b> Cardiovascular metrics fall within optimal baseline thresholds. 
-                            Continue routine annual physical wellness exams and maintain an active, heart-healthy lifestyle.
+                            <b>🩺 Protocol Advisory:</b> Patient metrics fall within optimal baseline thresholds. 
+                            Continue routine annual physical wellness exams and maintain active, heart-healthy habits.
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
 
-            # Dual Model Metric Breakdown
-            m1, m2 = st.columns(2)
-            with m1:
-                st.metric("Random Forest Classifier", f"{rf_prob*100:.1f}%", "Tree Ensemble")
-            with m2:
-                st.metric("Keras Neural Network", f"{ann_prob*100:.1f}%", "Deep Learning")
+        with res_right:
+            st.markdown("""
+                <div class="glass-panel">
+                    <h4 style="margin: 0 0 12px 0; color: #38BDF8;">📊 Vitals vs Clinical Reference Standards</h4>
+            """, unsafe_allow_html=True)
 
-        with res_col2:
-            st.markdown("#### 📊 Patient Vitals vs Clinical Benchmarks")
-
-            fig, ax = plt.subplots(figsize=(6, 4))
+            fig, ax = plt.subplots(figsize=(6, 3.8), dpi=150)
             fig.patch.set_facecolor('#0F172A')
             ax.set_facecolor('#1E293B')
 
@@ -463,8 +540,8 @@ def main():
             x = np.arange(len(vitals))
             width = 0.35
 
-            rects1 = ax.bar(x - width/2, patient_vals, width, label='Patient Vitals', color='#38BDF8', edgecolor='none')
-            rects2 = ax.bar(x + width/2, target_vals, width, label='Target Reference', color='#64748B', alpha=0.6, edgecolor='none')
+            rects1 = ax.bar(x - width/2, patient_vals, width, label='Patient', color='#38BDF8', edgecolor='none')
+            rects2 = ax.bar(x + width/2, target_vals, width, label='Target Ref', color='#64748B', alpha=0.6, edgecolor='none')
 
             ax.set_ylabel('Measured Units', color='#94A3B8', fontsize=9, fontweight='bold')
             ax.set_xticks(x)
@@ -475,7 +552,6 @@ def main():
             for spine in ax.spines.values():
                 spine.set_color('#334155')
 
-            # Add bar value labels
             for rect in rects1:
                 height = rect.get_height()
                 ax.annotate(f'{int(height)}',
@@ -484,6 +560,7 @@ def main():
                             ha='center', va='bottom', color='#38BDF8', fontsize=8, fontweight='bold')
 
             st.pyplot(fig)
+            st.markdown("</div>", unsafe_allow_html=True)
 
     with tab_analytics:
         st.subheader("📈 Model Evaluation & ROC-AUC Benchmarks")
@@ -498,16 +575,16 @@ def main():
         else:
             st.info("ROC-AUC plot artifact not found. Execute main.py to re-generate performance plots.")
 
-        st.markdown("#### 🏆 Performance Metrics Summary")
+        st.markdown("#### 🏆 Symmetrical Performance Matrix")
         ac1, ac2, ac3, ac4 = st.columns(4)
         with ac1:
             st.metric("Random Forest ROC-AUC", "0.912", "+2.4% over ANN")
         with ac2:
-            st.metric("Keras ANN ROC-AUC", "0.890", "Deep Learning Benchmark")
+            st.metric("Keras ANN ROC-AUC", "0.890", "Deep Learning")
         with ac3:
-            st.metric("Test Set Accuracy", "88.5%", "Stratified Split")
+            st.metric("Test Accuracy", "88.5%", "Stratified 80/20")
         with ac4:
-            st.metric("SMOTE Class Balance", "1:1 Ratio", "Over-sampled")
+            st.metric("SMOTE Class Balance", "1:1 Ratio", "Balanced")
 
     with tab_dict:
         st.subheader("📚 Clinical Feature Dictionary")
