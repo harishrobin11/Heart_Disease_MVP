@@ -274,7 +274,7 @@ def main():
             roc_path = os.path.join("artifacts", "roc_auc_comparison.png")
 
         if os.path.exists(roc_path):
-            st.image(roc_path, caption="ROC-AUC Curve Comparison (Random Forest vs Artificial Neural Network)", use_column_width=True)
+            st.image(roc_path, caption="ROC-AUC Curve Comparison (Random Forest vs Artificial Neural Network)", use_container_width=True)
         else:
             st.info("ROC-AUC plot image not found in plots/ folder.")
 
